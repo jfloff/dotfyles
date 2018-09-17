@@ -115,7 +115,7 @@ def _create_symlink(src, dst):
     if os.path.realpath(dst) != src:
         # remove existing file if not a symlink
         if not os.path.islink(dst):
-            os.remove(dst)
+            if os.path.isfile(dst): os.remove(dst)
 
         # if its not a symlink or realpath is not the same as the src we replace
         if os.path.islink(dst):
@@ -160,14 +160,14 @@ def _download_file(url, filepath=None):
 def _user_defaults(defaults):
     return os.path.join(_abspath('~/Library/Preferences/'), defaults + '.plist')
 
-def replace_user_path(app_path, new_user_path):
+def _replace_user_path(app_path, new_user_path):
     if app_path.startswith('/Users/'):
         app_path = os.path.join(new_user_path, '/'.join(app_path.split('/', 3)[3:]))
     return app_path
 
-def check_output_zsh(cmd):
+def _check_output_zsh(cmd):
     output = subprocess.check_output(cmd, shell=True, executable="/bin/zsh")
-    output = output.decode('utf.8')
+    output = output.decode('utf-8')
     return output
 
 #########################
@@ -329,6 +329,9 @@ def update_gitignore():
         'https://raw.githubusercontent.com/github/gitignore/master/Global/MicrosoftOffice.gitignore',
         'https://raw.githubusercontent.com/github/gitignore/master/Global/VisualStudioCode.gitignore',
         'https://raw.githubusercontent.com/github/gitignore/master/Global/JetBrains.gitignore',
+        'https://raw.githubusercontent.com/github/gitignore/master/Python.gitignore',
+        'https://raw.githubusercontent.com/github/gitignore/master/Java.gitignore',
+        'https://raw.githubusercontent.com/github/gitignore/master/Gradle.gitignore',
     ]
     GITIGNORE_SEP_LINE = '#######################\n#######################'
 
@@ -411,6 +414,8 @@ def shell():
     which_zsh = which['zsh'].run()[1].rstrip('\n')
     chsh['-s', which_zsh, SHELL_USER].run()
     chmod['-R', '755', '/usr/local/share'].run()
+
+    _create_symlink('dotfyles.py', '~/.dotfyles.py')
 
     _symlink_to_home('.profile')
     _symlink_to_home('.profile.private')
@@ -512,6 +517,7 @@ def conf_osx__general():
 def conf_osx__dock():
     defaults = local['defaults']
     dockutil = _local_with_brew_check('dockutil')
+    killall = local['killall']
 
 
     _grass("Configuring Dock")
@@ -581,12 +587,19 @@ def conf_osx__dock():
                 # remove the file and spaces encoding
                 app_path = line[1].replace('file://','').replace('%20',' ')
                 # also remove the user path if it exists
-                app_path = replace_user_path(app_path, USER_PATH)
+                app_path = _replace_user_path(app_path, USER_PATH)
 
                 # add no-restart on every command except the last
                 params = ['--add', app_path, '--section', app_section]
                 if i < row_count: params.append('--no-restart')
                 dockutil[params].run()
+
+    # _info("Reset dock to fix icons")
+    # sudo[find['/private/var/folders/', '-name', 'com.apple.iconservices', '-exec', 'rm', '-rf', '\{\}', '\\']].run()
+    # sudo.popen("find /private/var/folders/ -name com.apple.iconservices -exec rm -rf {} \\")
+    # sudo[rm['-rf', '/Library/Caches/com.apple.iconservices.store']].run()
+    # killall['Dock'].run(retcode=None)
+    # defaults write com.apple.dock ResetLaunchPad -bool true;
 
     _ok()
 
@@ -1492,7 +1505,7 @@ def cron_tasks():
 
     # Docker
     _grass("Clean up Docker")
-    print(check_output_zsh('source ' + _abspath('~/.profile') + ' ; docker clean'))
+    print(_check_output_zsh('source ' + _abspath('~/.profile') + ' ; docker clean'))
     _ok()
 
     # Brew
@@ -1529,7 +1542,7 @@ if __name__ == '__main__':
 
     # if only one function was called
     if args.method:
-        print(locals()[args.method]())
+        locals()[args.method]()
         exit(0)
 
     _snek("Starting! Hissss...")

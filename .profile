@@ -8,7 +8,10 @@ export DOTFYLES_GDRIVE_PATH=~/Drive/code/dotfyles
 #############################################################
 # PRIVATE INFO
 #
-source .profile.private
+# skips if the file doesnt exist
+if [ -f ~/.profile.private ]; then
+  source ~/.profile.private
+fi
 
 
 #############################################################

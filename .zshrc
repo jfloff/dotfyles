@@ -143,5 +143,5 @@ eval "$(hub alias -s)"
 
 # only execute on sundays
 if [[ $(date +%u) -eq 7 ]] ; then
-    python dotfyles.py --method cron_tasks
+    python ~/.dotfyles.py --method cron_tasks
 fi
