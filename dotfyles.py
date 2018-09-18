@@ -1134,6 +1134,9 @@ def conf_osx__extensions():
     _grass("Configuring applications to open certain files")
 
     duti["-s", "com.microsoft.VSCode", ".txt", "all"].run()
+    duti["-s", "com.macpaw.site.theunarchiver", ".zip", "all"].run()
+    duti["-s", "com.macpaw.site.theunarchiver", ".rar", "all"].run()
+    duti["-s", "com.macpaw.site.theunarchiver", ".7z", "all"].run()
 
     _ok()
 
@@ -1530,9 +1533,9 @@ if __name__ == '__main__':
     # parse some flags
     # TODO: flags from init have to come here as well
     parser = argparse.ArgumentParser()
-    parser.add_argument('--force', action='store_true')
-    parser.add_argument('--update', action='store_true')
-    parser.add_argument('--method', type=str)
+    parser.add_argument('--force', '-f', action='store_true')
+    parser.add_argument('--update', '-u', action='store_true')
+    parser.add_argument('--method', '-m', type=str)
     args = parser.parse_args()
 
     # import only after we install the pip packages

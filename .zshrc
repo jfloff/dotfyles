@@ -141,6 +141,11 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 # THIS HAS TO BE AT THE END, otherwise package manager might not work
 eval "$(hub alias -s)"
 
+# init pyenv shims
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
+
 # only execute on sundays
 if [[ $(date +%u) -eq 7 ]] ; then
     python ~/.dotfyles.py --method cron_tasks
