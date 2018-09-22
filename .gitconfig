@@ -49,7 +49,7 @@
 	trustctime = false
     # To fix scrolling
     # https://askubuntu.com/a/803998
-	pager = less -+X
+	pager = less -+FX
 
 [alias]
     # most commonly used
