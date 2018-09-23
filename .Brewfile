@@ -51,7 +51,6 @@ brew "libusb"
 brew "make"
 brew "mas"
 brew "maven"
-brew "minizinc"
 brew "moreutils"
 brew "ntfs-3g"
 brew "openssh"
@@ -111,3 +110,4 @@ cask "visualvm"
 cask "vlc"
 cask "zulu7"
 mas "Keynote", id: 409183694
+mas "Microsoft OneNote", id: 784801555
