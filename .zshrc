@@ -148,5 +148,7 @@ fi
 
 # only execute on sundays
 if [[ $(date +%u) -eq 7 ]] ; then
+    pushd ~ > /dev/null 2>&1
     python ~/.dotfyles.py --method cron_tasks
+    popd > /dev/null 2>&1
 fi

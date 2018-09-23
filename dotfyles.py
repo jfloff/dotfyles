@@ -23,6 +23,8 @@ import csv
 import re
 import urllib
 import json
+import datetime
+import time
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
 DEV_NULL = open(os.devnull, 'w')
@@ -1414,7 +1416,7 @@ def alfred():
 
     # check if alfred is installed
     _download_file('https://github.com/packal/repository/raw/master/com.shawn.patrick.rice.caffeinate.control/caffeinate_control.alfredworkflow','/tmp/')
-    openapp['/tmp/caffeinate_control.alfredworkflow'].run()
+    # openapp['/tmp/caffeinate_control.alfredworkflow'].run()
 
     _ok()
 
@@ -1502,6 +1504,22 @@ def cron_tasks():
     brew = local['brew']
     git = local['git']
     dockutil = local['dockutil']
+    touch = local['touch']
+
+
+    cron_ts_filepath = _abspath('~/.DOTFYLES_CRON_TS')
+    # Check last time cron ran
+    if not os.path.exists(cron_ts_filepath):
+        touch[cron_ts_filepath].run()
+
+    # read ts of last modification
+    last_ts = os.path.getmtime(cron_ts_filepath)
+    # figure out how many days ago was that
+    days_ago = (datetime.datetime.fromtimestamp(last_ts) - datetime.datetime.utcnow()).days
+
+    # if we found out that we don't need to run just skip
+    if days_ago < 7:
+        return
 
     update_gitignore()
     update_osx()
@@ -1524,6 +1542,10 @@ def cron_tasks():
     _grass("Execute backup tasks")
     with open('.macos_dock', 'w+') as f:
         f.write(dockutil['--list'].run()[1])
+
+    # touch file
+    touch[cron_ts_filepath].run()
+
     _ok()
 
 
