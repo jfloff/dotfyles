@@ -92,7 +92,7 @@ zplug "plugins/colorize", from:oh-my-zsh
 # file system
 zplug "plugins/dirpersist", from:oh-my-zsh
 zplug "mfaerevaag/wd", as:command, use: 'wd.sh', hook-load:" wd() { . $ZPLUG_REPOS/mfaerevaag/wd/wd.sh } "
-zplug "zsh-users/zsh-completions"
+# zplug "zsh-users/zsh-completions"
 zplug "plugins/per-directory-history", from:oh-my-zsh
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 # zplug "zdharma/fast-syntax-highlighting", defer:3
