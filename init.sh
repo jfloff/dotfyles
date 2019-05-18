@@ -120,4 +120,4 @@ done
 ok
 
 # set input from the terminal
-python dotfyles.py < /dev/tty
+python $DOTFYLES_GDRIVE_PATH/dotfyles.py < /dev/tty
