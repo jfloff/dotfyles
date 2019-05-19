@@ -249,7 +249,9 @@ def personal_info():
         session = requests.Session()
         session.auth = (GITHUB_USR, GITHUB_PWD)
         github_info = session.get('https://api.github.com/users/'+GITHUB_USR).json()
-
+        if 'message' in github_info.keys() and 'Bad credentials' in github_info['message']:
+            _snek("Wrong GitHub credentials ... Exiting")
+            exit(-1)
         existing_name = github_info['name']
         existing_email = github_info['email']
         github_clientid = github_info['id']
@@ -376,6 +378,7 @@ def update_gitignore():
 
 def brew():
     brew = local['brew']
+    readlink = local['/usr/bin/readlink']
 
     # Make sure we’re using the latest Homebrew
     _grass("Updating homebrew")
@@ -397,7 +400,7 @@ def brew():
     _info("Make sure loginitems ls command prints more output")
     # FIXME: Copy this file until PR is not merged back to main
     # find path no matter the loginitems version
-    loginitemsls_path = readlink['-f', '/usr/local/bin/loginitems-ls'].run()[1]
+    loginitemsls_path = readlink['/usr/local/bin/loginitems-ls'].run()[1]
     _download_file('https://raw.githubusercontent.com/jfloff/loginitems/master/loginitems-ls', loginitemsls_path)
 
     _ok()
@@ -520,6 +523,7 @@ def conf_osx__dock():
     defaults = local['defaults']
     dockutil = _local_with_brew_check('dockutil')
     killall = local['killall']
+    openapp = local['open']
 
 
     _grass("Configuring Dock")
@@ -572,6 +576,7 @@ def conf_osx__dock():
     dock_settings = _symlink_to_home('.macos_dock')
 
     _info("Setup docker icons")
+    openapp['/Applications/Docker.app']
     # tries to read file, if it doesnt exist we do nothing
     if dock_settings is None:
         _warn("No macOS dock settings found at '~/.macos_dock'. It might be your first setup. If its not, either run with 'dockutil' or wait for crontab task.")
@@ -594,7 +599,7 @@ def conf_osx__dock():
                 # add no-restart on every command except the last
                 params = ['--add', app_path, '--section', app_section]
                 if i < row_count: params.append('--no-restart')
-                dockutil[params].run()
+                dockutil[params].run(retcode=None)
 
     # _info("Reset dock to fix icons")
     # sudo[find['/private/var/folders/', '-name', 'com.apple.iconservices', '-exec', 'rm', '-rf', '\{\}', '\\']].run()
@@ -763,7 +768,7 @@ def conf_osx__spotlight():
         '"MENU_OTHER"': True,
     }
     # reset and set again
-    defaults['delete', 'com.apple.Spotlight', 'orderedItems'].run()
+    defaults['delete', 'com.apple.Spotlight', 'orderedItems'].run(retcode=None)
     for name,enabled in SPOTLIGHT_INDEX_SETTINGS.items():
         defaults['write', 'com.apple.Spotlight', 'orderedItems', '-array-add', "'<dict><key>name</key><string>" + name + "</string><key>enabled</key> <" + str(int(enabled)) + "/></dict>'"].run()
 
@@ -782,8 +787,8 @@ def conf_osx__keyboard():
     defaults['write', 'NSGlobalDomain', 'NSAutomaticQuoteSubstitutionEnabled', '-bool', 'false'].run()
     defaults['write', 'NSGlobalDomain', 'NSAutomaticDashSubstitutionEnabled', '-bool', 'false'].run()
 
-    _info("Remove spotlight keyboard shortcut")
-    plistbuddy[_abspath('~/Library/Preferences/com.apple.symbolichotkeys.plist'), '-c', 'Set AppleSymbolicHotKeys:64:enabled false'].run()
+    # _info("Remove spotlight keyboard shortcut")
+    # plistbuddy[_abspath('~/Library/Preferences/com.apple.symbolichotkeys.plist'), '-c', 'Set AppleSymbolicHotKeys:64:enabled false'].run()
 
     _info("Stop iTunes from responding to the keyboard media keys")
     launchctl['unload', '-w', '/System/Library/LaunchAgents/com.apple.rcd.plist'].run()
@@ -1080,7 +1085,7 @@ def conf_osx__hardware():
 
 def conf_osx__other():
     defaults = local['defaults']
-    app_open = local['open']
+    openapp = local['open']
     launchctl = sudo[local['launchctl']]
     plutil = sudo[local['plutil']]
 
@@ -1107,7 +1112,7 @@ def conf_osx__other():
 
     _info("Play chime (iOS charging sound) when charging")
     defaults['write', 'com.apple.PowerChime', 'ChimeOnAllHardware', '-bool', 'true'].run()
-    app_open['/System/Library/CoreServices/PowerChime.app'].run()
+    openapp['/System/Library/CoreServices/PowerChime.app'].run()
 
     # running "Disable repoen windows system-wide"
     # defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false;ok
@@ -1145,7 +1150,7 @@ def conf_osx__extensions():
 
 def conf_osx():
     killall = local['killall']
-    app_open = local['open']
+    openapp = local['open']
 
 
     _snek("Configuring macOS settings")
@@ -1155,7 +1160,7 @@ def conf_osx():
     _ok()
 
     _grass("Opening panels so they write default settings")
-    app_open["/System/Library/PreferencePanes/Spotlight.prefPane/"].run()
+    openapp["/System/Library/PreferencePanes/Spotlight.prefPane/"].run()
     _ok()
 
     _warn("Killing 'System Preferences' to avoid settings from being overridden. Please do not open until reboot.")
@@ -1167,7 +1172,7 @@ def conf_osx():
     conf_osx__mission_control()
     conf_osx__language()
     conf_osx__sec()
-    conf_osx__spotlight()
+    # conf_osx__spotlight()
     conf_osx__keyboard()
     conf_osx__trackpad()
     conf_osx__timemachine()
@@ -1291,13 +1296,13 @@ def iterm():
 
 def vscode():
     openapp = local['open']
-    vscode = local['code']
 
 
     _grass("Set Visual Studio Code settings")
 
     _info("Waiting for VSCode binaries to be available ...")
     _wait_for_file("/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code")
+    vscode = local['/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code']
 
     _info("Installing Settings Sync extension")
     sync_extensionid = 'Shan.code-settings-sync'
@@ -1451,7 +1456,6 @@ def teardown():
     # Remove outdated versions from the cellar
     _grass("Cleaning up homebrew cache")
     brew['cleanup'] & FG
-    brew['cask','cleanup'] & FG
     _ok()
 
     _grass("Killing affected applications (so they can reboot)....")
@@ -1474,6 +1478,10 @@ def teardown():
         Set Finder settings:
             - Remove 'All My Files', 'Movies', 'Music' and 'Pictures' from sidebar
             - Add folders to sidebar: 'PhD', 'Code'
+        
+        Double check Spotlight preferences:
+            - Spotlight is very volatile so double check if keyboard shortcut is removed
+            - And if its indexing only the needed things
 
         Set Network settings:
             - Add University VPN
@@ -1497,6 +1505,7 @@ def teardown():
     """
 
     # print and save to file
+    print(post_mortem)
 
 
 def cron_tasks():
@@ -1563,7 +1572,7 @@ if __name__ == '__main__':
     # import only after we install the pip packages
     import requests
     from plumbum import local, FG, BG, TF, RETCODE
-    from plumbum.cmd import sudo, true, rm, ln, echo, tee, cp, mv, ls, find, grep, readlink
+    from plumbum.cmd import sudo, true, rm, ln, echo, tee, cp, mv, ls, find, grep
 
     # if only one function was called
     if args.method:
@@ -1582,7 +1591,7 @@ if __name__ == '__main__':
 
 
     check_sip(double_check=False)
-    update_osx()
+    # update_osx()
     personal_info()
     git()
     brew()

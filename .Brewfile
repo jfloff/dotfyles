@@ -115,7 +115,6 @@ cask "the-unarchiver"
 cask "transmission"
 cask "virtualbox"
 cask "visualvm"
+cask "visual-studio-code"
 cask "vlc"
 cask "zulu7"
-mas "Keynote", id: 409183694
-mas "Microsoft OneNote", id: 784801555
