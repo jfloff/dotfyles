@@ -429,7 +429,7 @@ def shell():
     _symlink_to_home('.zprofile')
     _symlink_to_home('.zsh_history')
     _symlink_to_home('.zshrc')
-    _symlink_to_home('.warprc')
+    _create_symlink('.points', '~/.config/wdx/points')
     _ok()
 
     _grass("Silencing macOS login MOTD")
@@ -661,11 +661,11 @@ def conf_osx__mission_control():
     defaults['write', 'com.apple.dock', 'wvous-tr-modifier', '-int', 0].run()
 
     _info("Bottom left screen corner → Desktop")
-    defaults['write', 'com.apple.dock', 'wvous-bl-corner', '-int', 4].run()
+    defaults['write', 'com.apple.dock', 'wvous-bl-corner', '-int', 2].run()
     defaults['write', 'com.apple.dock', 'wvous-bl-modifier', '-int', 0].run()
 
     _info("Bottom right screen corner → Desktop")
-    defaults['write', 'com.apple.dock', 'wvous-br-corner', '-int', 4].run()
+    defaults['write', 'com.apple.dock', 'wvous-br-corner', '-int', 2].run()
     defaults['write', 'com.apple.dock', 'wvous-br-modifier', '-int', 0].run()
 
     _ok()
@@ -1478,7 +1478,7 @@ def teardown():
         Set Finder settings:
             - Remove 'All My Files', 'Movies', 'Music' and 'Pictures' from sidebar
             - Add folders to sidebar: 'PhD', 'Code'
-        
+
         Double check Spotlight preferences:
             - Spotlight is very volatile so double check if keyboard shortcut is removed
             - And if its indexing only the needed things
@@ -1499,7 +1499,7 @@ def teardown():
             - Enable LAN sync
 
         Set Mendeley configuration:
-            - File Organizer > Organize my files: ~/Drive/phd/rw
+            - File Organizer > Organize my files: /Volumes/GoogleDrive/My Drive/phd/rw
             - File Organizer > Sort files into subfolders > Folder path: Year
             - File Organizer > Rename document files > Filename: Author Year Title
     """

@@ -3,7 +3,7 @@
 #############################################################
 
 # path to google drive folder with the dotfyles path
-export DOTFYLES_GDRIVE_PATH=~/Drive/code/dotfyles
+export DOTFYLES_GDRIVE_PATH="/Volumes/GoogleDrive/My Drive/code/dotfyles"
 
 #############################################################
 # PRIVATE INFO
@@ -25,8 +25,10 @@ export PATH=/usr/local/opt/python/libexec/bin:$PATH
 # for jenv
 export PATH=$HOME/.jenv/bin:$PATH
 # for coreutils
-export PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
-export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
+# bug with Google Drive File Stream and the gnu utils
+# disabling this for now
+# export PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
+# export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
 # for vscode
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 
@@ -116,6 +118,8 @@ alias mvn="mvn -T 1C"
 alias sufind="sudo find"
 
 alias sane="stty sane"
+
+alias wd="wdx"
 
 
 #############################################################
