@@ -3,7 +3,7 @@
 #############################################################
 
 # path to google drive folder with the dotfyles path
-export DOTFYLES_GDRIVE_PATH="/Volumes/GoogleDrive/My Drive/code/dotfyles"
+export DOTFYLES_GDRIVE_PATH="/Users/jfloff/Drive/code/dotfyles"
 
 #############################################################
 # PRIVATE INFO
@@ -206,7 +206,7 @@ docker-clean() {
   # cleans all those scenarios
   while : ; do
     IMAGE_IDS=$(docker images | grep \<none\> | awk '{print $3}')
-    NUM_IMAGES=$(echo $IMAGE_IDS | sed '/^\s*$/d' | wc -l)
+    NUM_IMAGES=$(echo $IMAGE_IDS | sed '/^\s*$/d' | wc -l | xargs)
     [[ $NUM_IMAGES != 0 ]] || break
     printf '%s\n' "$IMAGE_IDS" | while IFS= read -r i; do docker rmi -f $i; done
   done
