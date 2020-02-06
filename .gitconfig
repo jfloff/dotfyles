@@ -50,6 +50,8 @@
     # To fix scrolling
     # https://askubuntu.com/a/803998
 	pager = less -+FX
+    # ignores chmod file modes
+	fileMode = false
 
 [alias]
     # most commonly used

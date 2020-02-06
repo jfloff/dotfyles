@@ -241,6 +241,9 @@ tmux_conf_theme_clock_style='24'
 # on Linux, this requires xsel or xclip
 tmux_conf_copy_to_os_clipboard=false
 
+# broadcast to panes
+bind b setw synchronize-panes \; display "Broadcasting!"
+set-option -g status-position top
 
 # -- user customizations -------------------------------------------------------
 # this is the place to override or undo settings

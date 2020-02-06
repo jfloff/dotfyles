@@ -24,13 +24,16 @@ export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/opt/python/libexec/bin:$PATH
 # for jenv
 export PATH=$HOME/.jenv/bin:$PATH
+# for vscode
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 # for coreutils
 # bug with Google Drive File Stream and the gnu utils
 # disabling this for now
 # export PATH=/usr/local/opt/coreutils/libexec/gnubin:$PATH
 # export MANPATH=/usr/local/opt/coreutils/libexec/gnuman:$MANPATH
-# for vscode
-export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+# for findutils
+export PATH=/usr/local/opt/findutils/libexec/gnubin:$PATH
+export MANPATH=/usr/local/opt/findutils/libexec/gnuman:$MANPATH
 
 
 #############################################################
@@ -95,9 +98,6 @@ alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[
 # Remove all items safely, to Trash
 alias rrm='rm'
 alias rm='trash'
-
-# compact ping
-alias ping="ing"
 
 # Detect which `ls` flavor is in use
 if ls --color > /dev/null 2>&1; then # GNU `ls`
