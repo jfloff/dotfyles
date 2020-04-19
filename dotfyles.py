@@ -876,6 +876,7 @@ def conf_osx__timemachine():
 
     _ok()
 
+
 def conf_osx__menubar():
     defaults = local['defaults']
 
@@ -1498,7 +1499,7 @@ def teardown():
 
         Set iCloud settings:
             - Disable Safari and Mail sync
-            - Sign in for Facebook, Twitter, Linkedin, Google (Only select contacts)
+            - Sign in for Google (Only select contacts)
 
         Set Dropbox configuration:
             - Show desktop notifications
@@ -1530,6 +1531,7 @@ def update_brew():
     git['submodule', 'update', '--init', '--recursive'] & FG
     _ok()
 
+
 def backup_osx():
     dockutil = _local_with_brew_check('dockutil')
 
@@ -1537,6 +1539,7 @@ def backup_osx():
     _grass("Execute backup tasks")
     with open('.macos_dock', 'w+') as f:
         f.write(dockutil['--list'].run()[1])
+
 
 if __name__ == '__main__':
     installed_packages = install_pip_packages()
