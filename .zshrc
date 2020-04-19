@@ -47,7 +47,6 @@ zplug "plugins/common-aliases", from:oh-my-zsh
 
 # terminal
 zplug "plugins/compleat", from:oh-my-zsh
-zplug "plugins/sudo", from:oh-my-zsh
 zplug "plugins/gnu-utils", from:oh-my-zsh
 zplug "hlissner/zsh-autopair", defer:2
 
@@ -153,3 +152,5 @@ if [[ $(date +%u) -eq 7 ]] ; then
     python ~/.dotfyles.py --method cron_tasks
     popd > /dev/null 2>&1
 fi
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+

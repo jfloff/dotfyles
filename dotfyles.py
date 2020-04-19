@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # -*- coding: UTF-8 -*-
 
 # References:
@@ -11,6 +12,7 @@ import os
 import distutils.spawn
 import subprocess
 from pip._internal import main, utils
+from pip._internal.utils.misc import get_installed_distributions
 import argparse
 import getpass
 import sys
@@ -113,6 +115,10 @@ def _create_symlink(src, dst):
     if not os.path.exists(src):
         return None
 
+    # create path to file if dst doesnt exist
+    if not os.path.exists(os.path.dirname(dst)):
+        os.makedirs(dst)
+
     # if the paths are different we will force removal
     if os.path.realpath(dst) != src:
         # remove existing file if not a symlink
@@ -210,7 +216,7 @@ def ensure_sudo():
 
 
 def install_pip_packages():
-    packages = utils.misc.get_installed_distributions()
+    packages = get_installed_distributions()
     packages = [ p.project_name for p in packages ]
     needed_packages = list(set(PIP_DEPENDENCIES) - set(packages))
     if needed_packages:
@@ -572,6 +578,9 @@ def conf_osx__dock():
 
     _info("Enable spring loading for all Dock items")
     defaults['write', 'com.apple.dock', 'enable-spring-load-actions-on-all-items', '-bool', 'true'].run()
+    
+    _info("Disable show recent apps")
+    defaults['write', 'com.apple.dock', 'show-recents', '-bool', 'false'].run()
 
     dock_settings = _symlink_to_home('.macos_dock')
 
@@ -661,11 +670,11 @@ def conf_osx__mission_control():
     defaults['write', 'com.apple.dock', 'wvous-tr-modifier', '-int', 0].run()
 
     _info("Bottom left screen corner → Desktop")
-    defaults['write', 'com.apple.dock', 'wvous-bl-corner', '-int', 2].run()
+    defaults['write', 'com.apple.dock', 'wvous-bl-corner', '-int', 4].run()
     defaults['write', 'com.apple.dock', 'wvous-bl-modifier', '-int', 0].run()
 
     _info("Bottom right screen corner → Desktop")
-    defaults['write', 'com.apple.dock', 'wvous-br-corner', '-int', 2].run()
+    defaults['write', 'com.apple.dock', 'wvous-br-corner', '-int', 4].run()
     defaults['write', 'com.apple.dock', 'wvous-br-modifier', '-int', 0].run()
 
     _ok()
@@ -1125,12 +1134,12 @@ def conf_osx__other():
     _info("Get SF Mono Fonts")
     cp.popen("-v /Applications/Utilities/Terminal.app/Contents/Resources/Fonts/SFMono-* " + _abspath("~/Library/Fonts"))
 
-    _info("Disable Bonjour")
-    sudo[defaults["write", "/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist", "ProgramArguments", "-array-add", "-NoMulticastAdvertisements"]].run()
+    # _info("Disable Bonjour")
+    # sudo[defaults["write", "/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist", "ProgramArguments", "-array-add", "-NoMulticastAdvertisements"]].run()
 
-    _info("Disable Siri")
-    plutil['-replace', 'Disabled', '-bool', 'true', '/System/Library/LaunchAgents/com.apple.Siri.agent.plist'].run()
-    plutil['-replace', 'Disabled', '-bool', 'true', '/System/Library/LaunchAgents/com.apple.assistantd.plist'].run()
+    # _info("Disable Siri")
+    # plutil['-replace', 'Disabled', '-bool', 'true', '/System/Library/LaunchAgents/com.apple.Siri.agent.plist'].run()
+    # plutil['-replace', 'Disabled', '-bool', 'true', '/System/Library/LaunchAgents/com.apple.assistantd.plist'].run()
 
     _ok()
 
@@ -1482,9 +1491,10 @@ def teardown():
         Double check Spotlight preferences:
             - Spotlight is very volatile so double check if keyboard shortcut is removed
             - And if its indexing only the needed things
-
-        Set Network settings:
-            - Add University VPN
+        
+        Configure Docker:
+            - Set used CPU and Memory
+            - Open on system startup
 
         Set iCloud settings:
             - Disable Safari and Mail sync
@@ -1508,55 +1518,25 @@ def teardown():
     print(post_mortem)
 
 
-def cron_tasks():
-    docker = local['docker']
+def update_brew():
     brew = local['brew']
     git = local['git']
-    dockutil = local['dockutil']
-    touch = local['touch']
 
-
-    cron_ts_filepath = _abspath('~/.DOTFYLES_CRON_TS')
-    # Check last time cron ran
-    if not os.path.exists(cron_ts_filepath):
-        touch[cron_ts_filepath].run()
-
-    # read ts of last modification
-    last_ts = os.path.getmtime(cron_ts_filepath)
-    # figure out how many days ago was that
-    days_ago = (datetime.datetime.fromtimestamp(last_ts) - datetime.datetime.utcnow()).days
-
-    # if we found out that we don't need to run just skip
-    if days_ago < 7:
-        return
-
-    update_gitignore()
-    update_osx()
-
-    # Docker
-    _grass("Clean up Docker")
-    print(_check_output_zsh('source ' + _abspath('~/.profile') + ' ; docker clean'))
-    _ok()
-
-    # Brew
     _grass("Update Homebrew")
     brew["update"] & FG
-    brew["upgrade", "--all"] & FG
+    brew["upgrade"] & FG
     brew["cleanup"] & FG
     brew["bundle", "dump", "--file=.Brewfile", "--force"] & FG
     git['submodule', 'update', '--init', '--recursive'] & FG
     _ok()
 
+def backup_osx():
+    dockutil = _local_with_brew_check('dockutil')
+
     # Backup Tasks
     _grass("Execute backup tasks")
     with open('.macos_dock', 'w+') as f:
         f.write(dockutil['--list'].run()[1])
-
-    # touch file
-    touch[cron_ts_filepath].run()
-
-    _ok()
-
 
 if __name__ == '__main__':
     installed_packages = install_pip_packages()
@@ -1585,25 +1565,31 @@ if __name__ == '__main__':
     caffeinate = local["caffeinate"]
     caff = caffeinate.popen("-i -d")
 
+    # change working dir to this script dir
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
     if args.update:
+        update_brew()
         update_gitignore()
         update_osx()
+        backup_osx()
 
+        _grass("Consider reviewing these changes and commiting.")
+        _snek("Hissss. All done!")
+    else:
+        check_sip(double_check=False)
+        personal_info()
+        git()
+        brew()
+        shell()
+        conf_osx()
+        conf_apps()
+        teardown()
 
-    check_sip(double_check=False)
-    # update_osx()
-    personal_info()
-    git()
-    brew()
-    shell()
-    conf_osx()
-    conf_apps()
-    teardown()
+        # uninstall pip packages
+        uninstall_pip_packages(installed_packages)
+        caff.terminate()
 
-    # uninstall pip packages
-    uninstall_pip_packages(installed_packages)
-    caff.terminate()
-
-    _grass("Note that some of these changes require a logout/restart to take effect.")
-    _grass("You should also NOT open System Preferences. It might overwrite some of the settings.")
-    _snek("Hissss. All done!")
+        _grass("Note that some of these changes require a logout/restart to take effect.")
+        _grass("You should also NOT open System Preferences. It might overwrite some of the settings.")
+        _snek("Hissss. All done!")

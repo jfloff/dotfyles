@@ -52,6 +52,7 @@
 	pager = less -+FX
     # ignores chmod file modes
 	fileMode = false
+	preloadIndex = true
 
 [alias]
     # most commonly used

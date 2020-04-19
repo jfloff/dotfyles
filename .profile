@@ -3,7 +3,7 @@
 #############################################################
 
 # path to google drive folder with the dotfyles path
-export DOTFYLES_GDRIVE_PATH="/Users/jfloff/Drive/code/dotfyles"
+export DOTFYLES_CLOUD_PATH="/Volumes/GoogleDrive/My Drive/code/dotfyles"
 
 #############################################################
 # PRIVATE INFO
@@ -54,13 +54,6 @@ fi
 # SHELL ALIAS
 #
 alias edit="${EDITOR} $1"
-
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
-else # OS X `ls`
-  colorflag="-G"
-fi
 
 # Enable aliases to be sudo’ed
 alias sudo='sudo '
@@ -120,6 +113,8 @@ alias sufind="sudo find"
 alias sane="stty sane"
 
 alias wd="wdx"
+
+alias python="python3"
 
 
 #############################################################

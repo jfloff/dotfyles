@@ -98,26 +98,26 @@ if [[ $brew_list != *python* ]]; then
 fi
 ok
 
-grass "Installing Google Backup and Sync ..."
-if ! open -Ra "Backup and Sync" ; then
-  brew cask install google-backup-and-sync
+grass "Installing Google Drive Filestream ..."
+if ! open -Ra "Google Drive File Stream" ; then
+  brew cask install google-drive-file-stream
 fi
 ok
 
 # source some vars such as the google drive path
-grass "Checking for \$DOTFYLES_GDRIVE_PATH variable ..."
+grass "Checking for \$DOTFYLES_CLOUD_PATH variable ..."
 source .profile
-if [ -z "$DOTFYLES_GDRIVE_PATH" ]; then
-  warn "You have to set the \$DOTFYLES_GDRIVE_PATH variable with the path for your dotfyles folder"
+if [ -z "$DOTFYLES_CLOUD_PATH" ]; then
+  warn "You have to set the \$DOTFYLES_CLOUD_PATH variable with the path for your dotfyles folder"
   exit
 fi
 ok
 
-grass "Waiting for '$DOTFYLES_GDRIVE_PATH' to be synced by Google Drive ..."
-while [ ! -f "$DOTFYLES_GDRIVE_PATH/dotfyles.py" ]; do
+grass "Waiting for '$DOTFYLES_CLOUD_PATH' to be synced by Google ..."
+while [ ! -f "$DOTFYLES_CLOUD_PATH/dotfyles.py" ]; do
   sleep 1
 done
 ok
 
 # set input from the terminal
-python "$DOTFYLES_GDRIVE_PATH/dotfyles.py" < /dev/tty
+python3 "$DOTFYLES_CLOUD_PATH/dotfyles.py" < /dev/tty
