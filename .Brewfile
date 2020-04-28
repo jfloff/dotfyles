@@ -71,6 +71,7 @@ brew "ojford/formulae/loginitems"
 cask "alfred"
 cask "alinof-timer"
 cask "apptrap"
+cask "beardedspice"
 cask "bitwarden"
 cask "docker"
 cask "dropbox"
@@ -99,5 +100,11 @@ cask "the-unarchiver"
 cask "transmission"
 cask "visual-studio-code"
 cask "vlc"
+cask "zoom"
+cask "zoomus"
 mas "Amphetamine", id: 937984704
+mas "Keynote", id: 409183694
+mas "Microsoft Excel", id: 462058435
 mas "Microsoft OneNote", id: 784801555
+mas "Microsoft PowerPoint", id: 462062816
+mas "Microsoft Word", id: 462054704

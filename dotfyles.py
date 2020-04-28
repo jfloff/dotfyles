@@ -874,7 +874,7 @@ def conf_osx__timemachine():
     _info("Prevent Time Machine from prompting to use new hard drives as backup volume")
     defaults['write', 'com.apple.TimeMachine', 'DoNotOfferNewDisksForBackup', '-bool', 'true'].run()
 
-    _ok()
+    _ok()  
 
 
 def conf_osx__menubar():
