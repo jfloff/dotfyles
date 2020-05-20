@@ -95,6 +95,7 @@ cask "quicklook-json"
 cask "rambox"
 cask "skype"
 cask "spotify"
+cask "station"
 cask "teamviewer"
 cask "the-unarchiver"
 cask "transmission"
@@ -103,6 +104,7 @@ cask "vlc"
 cask "zoom"
 cask "zoomus"
 mas "Amphetamine", id: 937984704
+mas "AS Timer", id: 512464723
 mas "Keynote", id: 409183694
 mas "Microsoft Excel", id: 462058435
 mas "Microsoft OneNote", id: 784801555

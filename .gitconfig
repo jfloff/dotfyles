@@ -56,13 +56,13 @@
 
 [alias]
     # most commonly used
+    f = fetch -p
+    fetch = fetch -p
     co = checkout
     c = commit
     cm = commit -m
     cam = commit -a -m
-    d = diff --color-words
-    ph = push
-    pl = pull
+    # diff = diff --color-words
     st = status
     listconf = config --global --list
     undo = reset --soft HEAD^
