@@ -125,7 +125,7 @@ zstyle ':completion:*' menu select
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # ls colors
-eval `dircolors -b $ZPLUG_HOME/repos/seebi/dircolors-solarized/dircolors.256dark`
+eval `gdircolors -b $ZPLUG_HOME/repos/seebi/dircolors-solarized/dircolors.256dark`
 
 # from https://github.com/zsh-users/zsh-history-substring-search/issues/59
 # zsh-history-substring-search configuration
@@ -153,4 +153,3 @@ if [[ $(date +%u) -eq 7 ]] ; then
     popd > /dev/null 2>&1
 fi
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-

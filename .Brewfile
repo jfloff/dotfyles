@@ -53,6 +53,7 @@ brew "rename"
 brew "rlwrap"
 brew "rsync"
 brew "ssh-copy-id"
+brew "sshuttle"
 brew "stormssh"
 brew "stow"
 brew "tmate"
@@ -92,7 +93,6 @@ cask "qlprettypatch"
 cask "qlstephen"
 cask "quicklook-csv"
 cask "quicklook-json"
-cask "rambox"
 cask "skype"
 cask "spotify"
 cask "station"
@@ -110,3 +110,4 @@ mas "Microsoft Excel", id: 462058435
 mas "Microsoft OneNote", id: 784801555
 mas "Microsoft PowerPoint", id: 462062816
 mas "Microsoft Word", id: 462054704
+mas "WireGuard", id: 1451685025

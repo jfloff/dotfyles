@@ -403,11 +403,8 @@ def brew():
     _ok()
 
     _grass("Brew post-installation settings")
-    _info("Make sure loginitems ls command prints more output")
-    # FIXME: Copy this file until PR is not merged back to main
-    # find path no matter the loginitems version
-    loginitemsls_path = readlink['/usr/local/bin/loginitems-ls'].run()[1]
-    _download_file('https://raw.githubusercontent.com/jfloff/loginitems/master/loginitems-ls', loginitemsls_path)
+    # TODO: handle login items
+    # _download_file('https://raw.githubusercontent.com/jfloff/loginitems/master/loginitems-ls', loginitemsls_path)
 
     _ok()
 
@@ -578,7 +575,7 @@ def conf_osx__dock():
 
     _info("Enable spring loading for all Dock items")
     defaults['write', 'com.apple.dock', 'enable-spring-load-actions-on-all-items', '-bool', 'true'].run()
-    
+
     _info("Disable show recent apps")
     defaults['write', 'com.apple.dock', 'show-recents', '-bool', 'false'].run()
 
@@ -874,7 +871,7 @@ def conf_osx__timemachine():
     _info("Prevent Time Machine from prompting to use new hard drives as backup volume")
     defaults['write', 'com.apple.TimeMachine', 'DoNotOfferNewDisksForBackup', '-bool', 'true'].run()
 
-    _ok()  
+    _ok()
 
 
 def conf_osx__menubar():
@@ -926,7 +923,7 @@ def conf_osx__login():
     _info("Enable auto-login at my user")
     sudo[defaults['write', '/Library/Preferences/com.apple.loginwindow', 'autoLoginUser', '-string', SHELL_USER]].run()
 
-    _info("Set login itens")
+    # _info("Set login itens")
     # waiting on PR: https://github.com/OJFord/loginitems/pull/2
 
     _ok()
@@ -1492,7 +1489,7 @@ def teardown():
         Double check Spotlight preferences:
             - Spotlight is very volatile so double check if keyboard shortcut is removed
             - And if its indexing only the needed things
-        
+
         Configure Docker:
             - Set used CPU and Memory
             - Open on system startup
